@@ -54,7 +54,7 @@ export default function App() {
     [],
   );
 
-  const [data, setData] = React.useState(() => makeData(50_000));
+  const [data, setData] = React.useState(() => makeData(2_000));
 
   const table = useReactTable({
     data,
