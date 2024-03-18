@@ -10,6 +10,7 @@
     "prettier": "prettier . --write"
   },
   "dependencies": {
+    "@tanstack/react-table": "^8.13.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "lucide-react": "^0.358.0",
@@ -18,9 +19,12 @@
     "react-dom": "^18",
     "react-virtualized": "^9.22.5",
     "react-virtualized-auto-sizer": "^1.0.24",
+    "react-virtuoso": "^4.7.2",
     "react-window": "^1.8.10",
     "tailwind-merge": "^2.2.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "ts-pattern": "^5.0.8",
+    "usehooks-ts": "^3.0.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",

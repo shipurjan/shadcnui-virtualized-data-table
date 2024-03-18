@@ -73,4 +73,7 @@
   body {
     @apply bg-background text-foreground;
   }
+  button {
+  @apply p-2 bg-gray-800 border border-red-700 rounded-md;
+  }
 }
