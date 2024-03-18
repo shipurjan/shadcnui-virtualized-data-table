@@ -5,6 +5,10 @@ import { ColumnDef } from "@tanstack/react-table";
 
 export const columns: ColumnDef<Person>[] = [
   {
+    accessorKey: "id",
+    header: "ID",
+  },
+  {
     accessorKey: "firstName",
     cell: (info) => info.getValue(),
   },

@@ -2,7 +2,6 @@
 
 import {
   ColumnDef,
-  OnChangeFn,
   SortingState,
   flexRender,
   getCoreRowModel,
@@ -10,25 +9,20 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
 import { useState } from "react";
 import { TableVirtuoso } from "react-virtuoso";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  height: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  height,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const table = useReactTable({
@@ -47,10 +41,22 @@ export function DataTable<TData, TValue>({
   return (
     <div className="rounded-md border">
       <TableVirtuoso
+        style={{ height }}
         totalCount={rows.length}
         components={{
           Table: ({ style, ...props }) => {
-            return <Table style={style} {...props} />;
+            return (
+              <Table
+                style={{
+                  width: "100%",
+                  tableLayout: "fixed",
+                  borderCollapse: "collapse",
+                  borderSpacing: 0,
+                  ...style,
+                }}
+                {...props}
+              />
+            );
           },
           TableRow: (props) => {
             const index = props["data-index"];
@@ -73,13 +79,20 @@ export function DataTable<TData, TValue>({
         }}
         fixedHeaderContent={() =>
           table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
+            // Change header background color to non-transparent
+            <TableRow className="bg-card hover:bg-muted" key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder ? null : header.isPlaceholder ? null : (
-                      // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+                  <TableHead
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    style={{
+                      width: header.getSize(),
+                    }}
+                  >
+                    {header.isPlaceholder ? null : (
                       <div
+                        className="flex items-center"
                         {...{
                           style: header.column.getCanSort()
                             ? { cursor: "pointer", userSelect: "none" }
@@ -94,10 +107,16 @@ export function DataTable<TData, TValue>({
                         {(() => {
                           const isSorted = header.column.getIsSorted();
                           if (isSorted === false) return null;
-                          return {
-                            asc: " 🔼",
-                            desc: " 🔽",
-                          }[isSorted];
+                          return (
+                            <div>
+                              {
+                                {
+                                  asc: "↑",
+                                  desc: "↓",
+                                }[isSorted]
+                              }
+                            </div>
+                          );
                         })()}
                       </div>
                     )}
@@ -111,46 +130,3 @@ export function DataTable<TData, TValue>({
     </div>
   );
 }
-
-//   <Table>
-//     <TableHeader>
-//       {table.getHeaderGroups().map((headerGroup) => (
-//         <TableRow key={headerGroup.id}>
-//           {headerGroup.headers.map((header) => {
-//             return (
-//               <TableHead key={header.id}>
-//                 {header.isPlaceholder
-//                   ? null
-//                   : flexRender(
-//                       header.column.columnDef.header,
-//                       header.getContext(),
-//                     )}
-//               </TableHead>
-//             );
-//           })}
-//         </TableRow>
-//       ))}
-//     </TableHeader>
-//     <TableBody>
-//       {table.getRowModel().rows?.length ? (
-//         table.getRowModel().rows.map((row) => (
-//           <TableRow
-//             key={row.id}
-//             data-state={row.getIsSelected() && "selected"}
-//           >
-//             {row.getVisibleCells().map((cell) => (
-//               <TableCell key={cell.id}>
-//                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
-//               </TableCell>
-//             ))}
-//           </TableRow>
-//         ))
-//       ) : (
-//         <TableRow>
-//           <TableCell colSpan={columns.length} className="h-24 text-center">
-//             No results.
-//           </TableCell>
-//         </TableRow>
-//       )}
-//     </TableBody>
-//   </Table>

@@ -11,6 +11,8 @@ const ShadcnDemo = ({ ...props }: ShadcnDemoProps) => {
 
   return (
     <div>
+      <DataTable columns={columns} data={data} height="500px" />
+
       <div>
         <div>{data.length} Rows</div>
         <button
@@ -28,7 +30,6 @@ const ShadcnDemo = ({ ...props }: ShadcnDemoProps) => {
           Delete first
         </button>
       </div>
-      <DataTable columns={columns} data={data} />
     </div>
   );
 };

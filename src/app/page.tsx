@@ -12,9 +12,9 @@ const ShadcnDemo = dynamic(() => import("../components/LongListDemo/Shadcn"), {
 
 export default function Home() {
   return (
-    <div>
-      <LongListDemo />
+    <div className="w-full">
       <ShadcnDemo />
+      <LongListDemo />
     </div>
   );
 }
