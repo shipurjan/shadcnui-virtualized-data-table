@@ -47,7 +47,6 @@ export function DataTable<TData, TValue>({
   return (
     <div className="rounded-md border">
       <TableVirtuoso
-        style={{ height: "500px" }}
         totalCount={rows.length}
         components={{
           Table: ({ style, ...props }) => {
