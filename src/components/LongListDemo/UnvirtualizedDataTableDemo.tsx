@@ -1,17 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { DataTable } from "../data-table/DataTable";
+import { DataTable } from "../data-table/UnvirtualizedDataTable";
 import { columns } from "../data-table/columns";
 import { makeData, newPerson } from "@/lib/makeData";
 
-export type ShadcnDemoProps = React.HTMLAttributes<HTMLDivElement>;
-const ShadcnDemo = ({ ...props }: ShadcnDemoProps) => {
-  const [data, setData] = useState(() => makeData(2_000));
+const UnvirtualizedDataTableDemo = () => {
+  const [data, setData] = useState(() => makeData(3_000));
 
   return (
     <div>
-      <DataTable columns={columns} data={data} height="500px" />
+      <div
+        style={{
+          height: "500px",
+          overflowY: "scroll"
+        }}
+      >
+        <DataTable columns={columns} data={data} />
+      </div>
 
       <div>
         <div>{data.length} Rows</div>
@@ -34,4 +40,4 @@ const ShadcnDemo = ({ ...props }: ShadcnDemoProps) => {
   );
 };
 
-export default ShadcnDemo;
+export default UnvirtualizedDataTableDemo;

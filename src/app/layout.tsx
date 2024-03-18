@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body
         className={cn(
-          "flex items-center justify-center mt-16 p-4",
+          "flex items-center justify-center p-4",
           inter.className,
         )}
       >
