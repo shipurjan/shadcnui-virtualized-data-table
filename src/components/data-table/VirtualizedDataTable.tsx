@@ -2,6 +2,8 @@
 
 import {
   ColumnDef,
+  Row,
+  SortDirection,
   SortingState,
   flexRender,
   getCoreRowModel,
@@ -10,8 +12,49 @@ import {
 } from "@tanstack/react-table";
 
 import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
-import { useState } from "react";
+import { HTMLAttributes, useState } from "react";
 import { TableVirtuoso } from "react-virtuoso";
+
+function TableComponent(props: HTMLAttributes<HTMLTableElement>) {
+  return <Table {...props} />;
+}
+
+const TableRowComponent = <TData,>(rows: Row<TData>[]) =>
+  function getTableRow(props: HTMLAttributes<HTMLTableRowElement>) {
+    // @ts-expect-error data-index is a valid attribute
+    const index = props["data-index"];
+    const row = rows[index];
+
+    if (!row) return null;
+
+    return (
+      <TableRow
+        key={row.id}
+        data-state={row.getIsSelected() && "selected"}
+        {...props}
+      >
+        {row.getVisibleCells().map((cell) => (
+          <TableCell key={cell.id}>
+            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          </TableCell>
+        ))}
+      </TableRow>
+    );
+  };
+
+function SortingIndicator({ isSorted }: { isSorted: SortDirection | false }) {
+  if (!isSorted) return null;
+  return (
+    <div>
+      {
+        {
+          asc: "↑",
+          desc: "↓",
+        }[isSorted]
+      }
+    </div>
+  );
+}
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -44,38 +87,8 @@ export function DataTable<TData, TValue>({
         style={{ height }}
         totalCount={rows.length}
         components={{
-          Table: ({ style, ...props }) => {
-            return (
-              <Table
-                style={{
-                  width: "100%",
-                  tableLayout: "fixed",
-                  borderCollapse: "collapse",
-                  borderSpacing: 0,
-                  ...style,
-                }}
-                {...props}
-              />
-            );
-          },
-          TableRow: (props) => {
-            const index = props["data-index"];
-            const row = rows[index];
-
-            return (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-                {...props}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            );
-          },
+          Table: TableComponent,
+          TableRow: TableRowComponent(rows),
         }}
         fixedHeaderContent={() =>
           table.getHeaderGroups().map((headerGroup) => (
@@ -95,7 +108,10 @@ export function DataTable<TData, TValue>({
                         className="flex items-center"
                         {...{
                           style: header.column.getCanSort()
-                            ? { cursor: "pointer", userSelect: "none" }
+                            ? {
+                                cursor: "pointer",
+                                userSelect: "none",
+                              }
                             : {},
                           onClick: header.column.getToggleSortingHandler(),
                         }}
@@ -104,20 +120,9 @@ export function DataTable<TData, TValue>({
                           header.column.columnDef.header,
                           header.getContext(),
                         )}
-                        {(() => {
-                          const isSorted = header.column.getIsSorted();
-                          if (isSorted === false) return null;
-                          return (
-                            <div>
-                              {
-                                {
-                                  asc: "↑",
-                                  desc: "↓",
-                                }[isSorted]
-                              }
-                            </div>
-                          );
-                        })()}
+                        <SortingIndicator
+                          isSorted={header.column.getIsSorted()}
+                        />
                       </div>
                     )}
                   </TableHead>
