@@ -11,13 +11,24 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
-import { HTMLAttributes, useState } from "react";
+import { TableCell, TableHead, TableRow } from "@/components/ui/table";
+import { HTMLAttributes, forwardRef, useState } from "react";
 import { TableVirtuoso } from "react-virtuoso";
+import { cn } from "@/lib/utils";
 
-function TableComponent(props: HTMLAttributes<HTMLTableElement>) {
-  return <Table {...props} />;
-}
+// Original Table is wrapped with a <div> (see https://ui.shadcn.com/docs/components/table#radix-:r24:-content-manual), 
+// but here we don't want it, so let's use a new component with only <table> tag
+const TableComponent = forwardRef<
+  HTMLTableElement,
+  React.HTMLAttributes<HTMLTableElement>
+>(({ className, ...props }, ref) => (
+  <table
+    ref={ref}
+    className={cn("w-full caption-bottom text-sm", className)}
+    {...props}
+  />
+));
+TableComponent.displayName = "TableComponent";
 
 const TableRowComponent = <TData,>(rows: Row<TData>[]) =>
   function getTableRow(props: HTMLAttributes<HTMLTableRowElement>) {
